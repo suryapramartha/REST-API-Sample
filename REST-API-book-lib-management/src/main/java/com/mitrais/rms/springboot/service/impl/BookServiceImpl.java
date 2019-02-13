@@ -14,37 +14,38 @@ import com.mitrais.rms.springboot.service.BookService;
 public class BookServiceImpl implements BookService{
 	
 	@Autowired
-	private BookRepository bookDao;
+	private BookRepository bookRepository;
 	
 	@Override
 	public List<Book> getAllBook()
 	{
-		return bookDao.findAll();
+		return bookRepository.findAll();
 	}
 	@Override
 	public void deleteById(int id)
 	{
-		bookDao.deleteById(id);
+		bookRepository.deleteById(id);
 	}
 
 	@Override
 	public void createBook(Book o) 
 	{
-		bookDao.save(o);
+		bookRepository.save(o);
 	}
 
 	@Override
 	public Optional<Book> getSelectedBookById(int id) 
 	{
-		return bookDao.findById(id);
+		return bookRepository.findById(id);
 	}
 	
 	@Override
 	public List<Book> getSelectedBookByStatus(String status) {
-		return bookDao.findByBookStatus(status);
+		return bookRepository.findByBookStatus(status);
 	}
+	
 	@Override
 	public List<Book> findByBookStatusAndBookTitle(String statusBook, String statusTitle) {
-		return bookDao.findByBookStatusAndBookTitle(statusBook, statusTitle);
+		return bookRepository.findByBookStatusAndBookTitle(statusBook, statusTitle);
 	}
 }

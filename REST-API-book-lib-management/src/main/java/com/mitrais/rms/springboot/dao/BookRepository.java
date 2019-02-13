@@ -12,7 +12,7 @@ public interface BookRepository extends JpaRepository<Book, Integer>{
 
 	List<Book> findByBookStatus(String statusBook);
 	
-	@Query(value="SELECT * FROM para_book u WHERE u.book_status = :bookStatus and u.book_title = :bookTitle",nativeQuery=true)
+	@Query(value="SELECT u FROM Book u WHERE u.bookStatus = :bookStatus and u.bookTitle = :bookTitle")
 	List<Book> findByBookStatusAndBookTitle(@Param("bookStatus") String statusBook, @Param("bookTitle") String statusTitle);
 	
 }
