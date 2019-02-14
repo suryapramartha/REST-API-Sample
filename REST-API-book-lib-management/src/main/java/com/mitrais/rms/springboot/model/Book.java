@@ -28,6 +28,9 @@ public class Book
 	
 	@Column(name="book_status")
 	private String bookStatus;
+	
+	@Column(name="shelf_id")
+	private int shelfId;
 
 	public Book(int bookId, String bookIsbn, String bookTitle, String bookAuthor, String bookStatus) 
 	{
@@ -90,6 +93,16 @@ public class Book
 	public void setBookStatus(String bookStatus) 
 	{
 		this.bookStatus = bookStatus;
+	}
+
+	 
+	
+	public int getShelfId() {
+		return shelfId;
+	}
+
+	public void setShelfId(int shelfId) {
+		this.shelfId = shelfId;
 	}
 
 	@Override

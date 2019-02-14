@@ -23,15 +23,15 @@ public class Shelf
 	@Column(name="current_capacity")
 	private int currentCapacity;
 	
-	@Column(name="book_id")
-	private int book_id;
 	
-	public Shelf(int shelfId, int maxCapacity, int currentCapacity, int book_id)
+	public Shelf() {
+		
+	}
+	public Shelf(int shelfId, int maxCapacity, int currentCapacity)
 	{
 		this.shelfId = shelfId;
 		this.maxCapacity = maxCapacity;
 		this.currentCapacity = currentCapacity;
-		this.book_id = book_id;
 	}
 
 	public int getShelfId() 
@@ -64,21 +64,10 @@ public class Shelf
 		this.currentCapacity = currentCapacity;
 	}
 
-	public int getBook_id() 
-	{
-		return book_id;
-	}
-
-
-	public void setBook_id(int book_id) 
-	{
-		this.book_id = book_id;
-	}
-
 	@Override
 	public String toString() 
 	{
 		return "Shelf [shelfId=" + shelfId + ", maxCapacity=" + maxCapacity + ", currentCapacity=" + currentCapacity
-				+ ", book_id=" + book_id + "]";
+				+"]";
 	}
 }
