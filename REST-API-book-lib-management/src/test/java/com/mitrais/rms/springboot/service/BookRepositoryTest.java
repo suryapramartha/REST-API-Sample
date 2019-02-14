@@ -1,6 +1,5 @@
 package com.mitrais.rms.springboot.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -17,26 +16,26 @@ import com.mitrais.rms.springboot.dao.BookRepository;
 import com.mitrais.rms.springboot.model.Book;
 
 @RunWith(SpringRunner.class)
-//@DataJpaTest
-@SpringBootTest
+//@DataJpaTest //how to use this.
+@SpringBootTest 
 public class BookRepositoryTest {
 
 	@Autowired
 	private BookRepository bookRepository;
 	
+	
 	@Test
 	public void findAll_test() {
 		List<Book> books = bookRepository.findAll();
-		assertEquals(3, books.size());
+		assertEquals(8, books.size());
 	}
 	
 	@Test
 	public void findByBookStatusAndBookTitle_testTotal() {
 		String status = "not_shelved";
 		String title = "The Mighty Dragonkin";
-		Book book1 = new Book(1,"whatever","The Mighty Dragonkin","Gde","not_shelved");
-		Book book2 = new Book(1,"whatever","The Mighty Dragonkin","Gde","shelved");
-
+//		Book book1 = new Book(1,"whatever","The Mighty Dragonkin","Gde","not_shelved");
+//		Book book2 = new Book(1,"whatever","The Mighty Dragonkin","Gde","shelved");
 		List<Book> books = bookRepository.findByBookStatusAndBookTitle(status,title);
 		assertEquals(1,books.size());
 	}
@@ -50,6 +49,5 @@ public class BookRepositoryTest {
 		String title = "The Mighty Dragonkin";
 		List<Book> books = bookRepository.findByBookStatusAndBookTitle(status,title);
 		assertEquals(book1,books.get(0));
-		//assertThat(bookRepository.findByBookStatusAndBookTitle(status,title)).isEqualTo(listBook);
 	}
 }

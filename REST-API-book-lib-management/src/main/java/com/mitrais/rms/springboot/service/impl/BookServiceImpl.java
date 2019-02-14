@@ -17,11 +17,6 @@ public class BookServiceImpl implements BookService{
 	private BookRepository bookRepository;
 	
 	@Override
-	public List<Book> getAllBook()
-	{
-		return bookRepository.findAll();
-	}
-	@Override
 	public void deleteById(int id)
 	{
 		bookRepository.deleteById(id);
@@ -47,5 +42,15 @@ public class BookServiceImpl implements BookService{
 	@Override
 	public List<Book> findByBookStatusAndBookTitle(String statusBook, String statusTitle) {
 		return bookRepository.findByBookStatusAndBookTitle(statusBook, statusTitle);
+	}
+	
+	@Override
+	public int removeBookFromShelf(int bookId) {
+		return bookRepository.removeBookFromShelf(bookId);
+	}
+	@Override
+	public int addBookToShelf(int shelfId, int bookId) {
+		// TODO Auto-generated method stub
+		return bookRepository.addBookToShelf(shelfId, bookId);
 	}
 }

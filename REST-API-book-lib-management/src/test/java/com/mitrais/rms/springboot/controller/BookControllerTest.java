@@ -19,7 +19,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.mitrais.rms.springboot.model.Book;
+import com.mitrais.rms.springboot.model.Shelf;
 import com.mitrais.rms.springboot.service.BookService;
+import com.mitrais.rms.springboot.service.ShelfService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BookController.class)
@@ -30,6 +32,9 @@ public class BookControllerTest {
 	
 	@MockBean
 	private BookService bookService;
+	
+	@MockBean 
+	private ShelfService shelfService;
 	
 	@Test
 	public void getBookByStatusAndTitle_testExpectOKandReturnValue() throws Exception 
@@ -46,7 +51,7 @@ public class BookControllerTest {
 		MvcResult res = mockMvc.perform(requestBuilder)
 				.andExpect(status().isOk())
 				.andReturn();
-		JSONAssert.assertEquals("[{bookId:1,bookIsbn:whatever,bookTitle:TheMightyDragonkin,bookAuthor:Gde,bookStatus:not_shelved}]",
+		JSONAssert.assertEquals("[{bookId:1,bookIsbn:whatever,bookTitle:TheMightyDragonkin,bookAuthor:Gde,bookStatus:not_shelved,shelfId:0}]",
 				res.getResponse().getContentAsString(),true);
 	}
 	
@@ -84,7 +89,7 @@ public class BookControllerTest {
 		MvcResult res = mockMvc.perform(requestBuilder)
 				.andExpect(status().isOk())
 				.andReturn();
-		JSONAssert.assertEquals("[{bookId:1,bookIsbn:whatever,bookTitle:TheMightyDragonkin,bookAuthor:Gde,bookStatus:not_shelved}]",
+		JSONAssert.assertEquals("[{bookId:1,bookIsbn:whatever,bookTitle:TheMightyDragonkin,bookAuthor:Gde,bookStatus:not_shelved,shelfId:0}]",
 				res.getResponse().getContentAsString(),true);
 	}
 	
@@ -115,9 +120,135 @@ public class BookControllerTest {
 		MvcResult res = mockMvc.perform(requestBuilder)
 				.andExpect(status().isCreated())
 				.andReturn();
-		JSONAssert.assertEquals("{bookId:0,bookIsbn:whatever,bookTitle:TheMightyDragonkin,bookAuthor:Gde,bookStatus:not_shelved}",
+		JSONAssert.assertEquals("{bookId:0,bookIsbn:whatever,bookTitle:TheMightyDragonkin,bookAuthor:Gde,bookStatus:not_shelved,shelfId:0}",
 				res.getResponse().getContentAsString(),true);
 		
+	}
+	
+	@Test
+	public void addBookToShelf_testExpectOKandReturnOK() throws Exception 
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 0);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.addBookToShelf(shelf.getShelfId(), bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/bookToShelves/")
+				.param("shelfId", String.valueOf(shelf.getShelfId()))
+				.param("bookId", String.valueOf(bookId))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("OK",res.getResponse().getContentAsString());
+	}
+	
+	@Test
+	public void addBookToShelf_testExpectOKandReturnBOOK_NOT_FOUND() throws Exception 
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 0);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.addBookToShelf(shelf.getShelfId(), bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/bookToShelves/")
+				.param("shelfId", String.valueOf(shelf.getShelfId()))
+				.param("bookId", String.valueOf(2))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("Book not found or already added",res.getResponse().getContentAsString());
+	}
+	
+	@Test
+	public void addBookToShelf_testExpectOKandReturnSHELF_NOT_FOUND() throws Exception 
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 0);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.addBookToShelf(shelf.getShelfId(), bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/bookToShelves/")
+				.param("shelfId", String.valueOf(2))
+				.param("bookId", String.valueOf(bookId))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("Shelf not found",res.getResponse().getContentAsString());
+	}
+	
+	@Test
+	public void addBookToShelf_testExpectOKandReturnFULL() throws Exception 
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 5);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.addBookToShelf(shelf.getShelfId(), bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/bookToShelves/")
+				.param("shelfId", String.valueOf(shelf.getShelfId()))
+				.param("bookId", String.valueOf(bookId))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("Can't add book, Shelf capacity is full",res.getResponse().getContentAsString());
+	}
+	
+	@Test
+	public void removeBookFromShelves_testExpectOKandreturnOK() throws Exception
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 1);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.removeBookFromShelf(bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/dropBookFromShelves/")
+				.param("shelfId", String.valueOf(shelf.getShelfId()))
+				.param("bookId", String.valueOf(bookId))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("OK",res.getResponse().getContentAsString());
+	}
+	
+	@Test
+	public void removeBookFromShelves_testExpectOKandreturnBOOK_NOT_FOUND() throws Exception
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 1);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.removeBookFromShelf(bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/dropBookFromShelves/")
+				.param("shelfId", String.valueOf(shelf.getShelfId()))
+				.param("bookId", String.valueOf(3))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("Book not found or already dropped",res.getResponse().getContentAsString());
+	}
+	
+	@Test
+	public void removeBookFromShelves_testExpectOKandreturnSHELF_NOT_FOUND() throws Exception
+	{		
+		int bookId=1;
+		Shelf shelf = new Shelf(1, 5, 1);
+		when(shelfService.displayShelfById(shelf.getShelfId())).thenReturn(shelf);
+		when(bookService.removeBookFromShelf(bookId)).thenReturn(1);
+		
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/dropBookFromShelves/")
+				.param("shelfId", String.valueOf(8))
+				.param("bookId", String.valueOf(bookId))
+				.accept(MediaType.APPLICATION_JSON);
+		MvcResult res = mockMvc.perform(requestBuilder)
+				.andExpect(status().isOk())
+				.andReturn();
+		assertEquals("Shelf not found",res.getResponse().getContentAsString());
 	}
 
 }

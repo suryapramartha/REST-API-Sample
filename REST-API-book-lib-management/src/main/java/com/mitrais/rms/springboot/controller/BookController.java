@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.mitrais.rms.springboot.model.Book;
+import com.mitrais.rms.springboot.model.Shelf;
 import com.mitrais.rms.springboot.service.BookService;
+import com.mitrais.rms.springboot.service.ShelfService;
 
 @RestController
 @RequestMapping("/api")
@@ -23,6 +25,8 @@ public class BookController {
 	@Autowired
 	private BookService bookService;
 	
+	@Autowired
+	private ShelfService shelfService;
 	/*
 	 * 
 	 * @GetMapping("/books")
@@ -97,5 +101,66 @@ public class BookController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
+	}
+	
+	/*Add Book to shelf (update current capacity in Shelf and book status in Book)*/
+	@GetMapping("/bookToShelves/") 
+	public String addBookToShelf(@RequestParam("shelfId") int shelfId, @RequestParam("bookId") int bookId)
+	{
+		String result = null;
+		int currentCapacity= 0;
+		Shelf shelf = shelfService.displayShelfById(shelfId);
+		if(shelf != null) 
+		{
+			currentCapacity = shelf.getCurrentCapacity();
+			if (currentCapacity >= shelf.getMaxCapacity()) 
+			{
+				result = "Can't add book, Shelf capacity is full";
+			}else 
+			{
+				int added = bookService.addBookToShelf(shelfId, bookId);
+				if(added==1) 
+				{
+					currentCapacity += 1;
+					shelfService.updateCurrentCapacity(shelfId, currentCapacity);
+					result = "OK";
+				}else 
+				{
+					result = "Book not found or already added";
+				}
+			}	
+		} else
+		{
+			result = "Shelf not found";
+		}
+		return result;
+	}
+	
+	/*Add Book to shelf (update current capacity in Shelf and book status in Book)*/
+	@GetMapping("/dropBookFromShelves/") 
+	public String removeBookFromShelves(@RequestParam("shelfId") int shelfId, @RequestParam("bookId") int bookId)
+	{
+		String result = null;
+		int currentCapacity= 0;
+		Shelf shelf = shelfService.displayShelfById(shelfId);
+		if(shelf != null) 
+		{
+			currentCapacity = shelf.getCurrentCapacity();
+			int added = bookService.removeBookFromShelf(bookId);
+			if(added==1) 
+			{
+				currentCapacity -= 1;
+				shelfService.updateCurrentCapacity(shelfId, currentCapacity);
+				result = "OK";
+			}else 
+			{
+				result = "Book not found or already dropped";
+			}
+				
+		} else
+		{
+			result = "Shelf not found";
+		}
+		return result;
 	}
 }
