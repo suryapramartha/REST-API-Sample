@@ -144,7 +144,7 @@ public class BookControllerTest {
 	}
 	
 	@Test
-	public void addBookToShelf_testExpectOKandReturnBOOK_NOT_FOUND() throws Exception 
+	public void addBookToShelf_testExpectNOT_FOUNDandReturnBOOK_NOT_FOUND() throws Exception 
 	{		
 		int bookId=1;
 		Shelf shelf = new Shelf(1, 5, 0);
@@ -156,13 +156,13 @@ public class BookControllerTest {
 				.param("bookId", String.valueOf(2))
 				.accept(MediaType.APPLICATION_JSON);
 		MvcResult res = mockMvc.perform(requestBuilder)
-				.andExpect(status().isOk())
+				.andExpect(status().isNotFound())
 				.andReturn();
 		assertEquals("Book not found or already added",res.getResponse().getContentAsString());
 	}
 	
 	@Test
-	public void addBookToShelf_testExpectOKandReturnSHELF_NOT_FOUND() throws Exception 
+	public void addBookToShelf_testExpectNOT_FOUNDandReturnSHELF_NOT_FOUND() throws Exception 
 	{		
 		int bookId=1;
 		Shelf shelf = new Shelf(1, 5, 0);
@@ -174,13 +174,13 @@ public class BookControllerTest {
 				.param("bookId", String.valueOf(bookId))
 				.accept(MediaType.APPLICATION_JSON);
 		MvcResult res = mockMvc.perform(requestBuilder)
-				.andExpect(status().isOk())
+				.andExpect(status().isNotFound())
 				.andReturn();
 		assertEquals("Shelf not found",res.getResponse().getContentAsString());
 	}
 	
 	@Test
-	public void addBookToShelf_testExpectOKandReturnFULL() throws Exception 
+	public void addBookToShelf_testExpectUNPROCESSandReturnFULL() throws Exception 
 	{		
 		int bookId=1;
 		Shelf shelf = new Shelf(1, 5, 5);
@@ -192,7 +192,7 @@ public class BookControllerTest {
 				.param("bookId", String.valueOf(bookId))
 				.accept(MediaType.APPLICATION_JSON);
 		MvcResult res = mockMvc.perform(requestBuilder)
-				.andExpect(status().isOk())
+				.andExpect(status().isUnprocessableEntity())
 				.andReturn();
 		assertEquals("Can't add book, Shelf capacity is full",res.getResponse().getContentAsString());
 	}
@@ -216,7 +216,7 @@ public class BookControllerTest {
 	}
 	
 	@Test
-	public void removeBookFromShelves_testExpectOKandreturnBOOK_NOT_FOUND() throws Exception
+	public void removeBookFromShelves_testExpectNOT_FOUNDandreturnBOOK_NOT_FOUND() throws Exception
 	{		
 		int bookId=1;
 		Shelf shelf = new Shelf(1, 5, 1);
@@ -228,13 +228,13 @@ public class BookControllerTest {
 				.param("bookId", String.valueOf(3))
 				.accept(MediaType.APPLICATION_JSON);
 		MvcResult res = mockMvc.perform(requestBuilder)
-				.andExpect(status().isOk())
+				.andExpect(status().isNotFound())
 				.andReturn();
 		assertEquals("Book not found or already dropped",res.getResponse().getContentAsString());
 	}
 	
 	@Test
-	public void removeBookFromShelves_testExpectOKandreturnSHELF_NOT_FOUND() throws Exception
+	public void removeBookFromShelves_testExpectNOT_FOUNDandreturnSHELF_NOT_FOUND() throws Exception
 	{		
 		int bookId=1;
 		Shelf shelf = new Shelf(1, 5, 1);
@@ -246,7 +246,7 @@ public class BookControllerTest {
 				.param("bookId", String.valueOf(bookId))
 				.accept(MediaType.APPLICATION_JSON);
 		MvcResult res = mockMvc.perform(requestBuilder)
-				.andExpect(status().isOk())
+				.andExpect(status().isNotFound())
 				.andReturn();
 		assertEquals("Shelf not found",res.getResponse().getContentAsString());
 	}
