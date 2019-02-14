@@ -105,7 +105,7 @@ public class BookController {
 	
 	/*Add Book to shelf (update current capacity in Shelf and book status in Book)*/
 	@GetMapping("/bookToShelves/") 
-	public String addBookToShelf(@RequestParam("shelfId") int shelfId, @RequestParam("bookId") int bookId)
+	public ResponseEntity<String> addBookToShelf(@RequestParam("shelfId") int shelfId, @RequestParam("bookId") int bookId)
 	{
 		String result = null;
 		int currentCapacity= 0;
@@ -116,6 +116,7 @@ public class BookController {
 			if (currentCapacity >= shelf.getMaxCapacity()) 
 			{
 				result = "Can't add book, Shelf capacity is full";
+				return new ResponseEntity<>(result,HttpStatus.UNPROCESSABLE_ENTITY);
 			}else 
 			{
 				int added = bookService.addBookToShelf(shelfId, bookId);
@@ -124,21 +125,25 @@ public class BookController {
 					currentCapacity += 1;
 					shelfService.updateCurrentCapacity(shelfId, currentCapacity);
 					result = "OK";
+					return new ResponseEntity<>(result,HttpStatus.OK);
 				}else 
 				{
 					result = "Book not found or already added";
+					return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+
 				}
 			}	
 		} else
 		{
 			result = "Shelf not found";
+			return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+
 		}
-		return result;
 	}
 	
 	/*Add Book to shelf (update current capacity in Shelf and book status in Book)*/
 	@GetMapping("/dropBookFromShelves/") 
-	public String removeBookFromShelves(@RequestParam("shelfId") int shelfId, @RequestParam("bookId") int bookId)
+	public ResponseEntity<String> removeBookFromShelves(@RequestParam("shelfId") int shelfId, @RequestParam("bookId") int bookId)
 	{
 		String result = null;
 		int currentCapacity= 0;
@@ -152,15 +157,18 @@ public class BookController {
 				currentCapacity -= 1;
 				shelfService.updateCurrentCapacity(shelfId, currentCapacity);
 				result = "OK";
+				return new ResponseEntity<>(result,HttpStatus.OK);
+
 			}else 
 			{
 				result = "Book not found or already dropped";
+				return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
 			}
 				
 		} else
 		{
 			result = "Shelf not found";
+			return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
 		}
-		return result;
 	}
 }
