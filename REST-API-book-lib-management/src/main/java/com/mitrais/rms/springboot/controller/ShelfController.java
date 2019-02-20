@@ -1,6 +1,10 @@
 package com.mitrais.rms.springboot.controller;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,13 +40,14 @@ public class ShelfController {
 	
 	/*create new books*/
 	@PostMapping("/shelfs")
-	public ResponseEntity<Shelf> createShelf(@RequestBody Shelf shelf) {
+	public ResponseEntity<?> createShelf(@RequestBody Shelf shelf) {
 		try {
 			shelfService.createShelf(shelf);
 			return new ResponseEntity<>(shelf,HttpStatus.CREATED);
-		}catch(Exception e) {
+		}catch(DataAccessException e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
+			//return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
 	}

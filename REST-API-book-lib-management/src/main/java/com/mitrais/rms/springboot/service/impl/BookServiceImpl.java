@@ -50,7 +50,6 @@ public class BookServiceImpl implements BookService{
 	}
 	@Override
 	public int addBookToShelf(int shelfId, int bookId) {
-		// TODO Auto-generated method stub
 		return bookRepository.addBookToShelf(shelfId, bookId);
 	}
 }

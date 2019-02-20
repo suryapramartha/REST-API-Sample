@@ -24,8 +24,7 @@ public class ShelfServiceImpl implements ShelfService {
 		
 	}
 
-	@Override
-	public int updateCurrentCapacity(int shelfId, int currentcapacity) {
+	protected int updateCurrentCapacity(int shelfId, int currentcapacity) {
 		return shelfRepository.updateCurrentCapacity(shelfId, currentcapacity);
 	}
 
