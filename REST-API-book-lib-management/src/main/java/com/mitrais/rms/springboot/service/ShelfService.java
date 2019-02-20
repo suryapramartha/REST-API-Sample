@@ -6,5 +6,4 @@ public interface ShelfService {
 	
 	void createShelf(Shelf shelf);
     Shelf displayShelfById(int id);
-    int updateCurrentCapacity(int shelfId,int currentcapacity);
 }
